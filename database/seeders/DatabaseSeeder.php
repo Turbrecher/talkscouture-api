@@ -24,10 +24,10 @@ class DatabaseSeeder extends Seeder
 
 
         $user = new User();
-        $user->name = "VICTOR";
-        $user->surname = "VERA";
-        $user->username = "VITTORIO";
-        $user->email = "VICTOR@CORREO.ES";
+        $user->name = "LUCIA";
+        $user->surname = "DIAZ";
+        $user->username = "LU";
+        $user->email = "LUCIA@CORREO.ES";
         $user->photo = "https://github.com/turbrecher.png";
         $user->password = Hash::make("12345678");
 
@@ -43,8 +43,6 @@ class DatabaseSeeder extends Seeder
         $user2->password = Hash::make("12345678");
 
         $user2->assignRole("writer");
-
-
         $user2->save();
 
         User::factory(10)->create();

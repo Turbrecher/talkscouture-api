@@ -179,11 +179,12 @@ class UserController extends Controller
     //Login
     function login(Request $request)
     {
-        $user = User::where('username',  strtoupper($request->username))->first();
-        if (! $user || ! Hash::check($request->password, $user->password)) {
+        $user = User::where('email',  strtoupper($request->email))->first();
+        if (!$user || !Hash::check($request->password, $user->password)) {
             return response()->json(
                 [
-                    'message' => ['Username or password incorrect']
+                    'message' => ['Username or password incorrect'],
+                    "user" => [$user]
                 ],
                 400
             );
