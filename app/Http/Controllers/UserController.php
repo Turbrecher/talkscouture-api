@@ -93,7 +93,7 @@ class UserController extends Controller
     function editUser(Request $request, int $id)
     {
         $validated = $request->validate([
-            "password" => ["max:50", "regex:/^[A-Za-z0-9?¿_-]{5,50}|^$/"],
+            "password" => ["max:50", "regex:/^[A-Za-z0-9?¿_-]{5,50}$|^ $"],
         ]);
 
 
@@ -124,7 +124,7 @@ class UserController extends Controller
             $user->email = $request['email'];
         }
 
-        if ($request->password != "") {
+        if ($request->password != " ") {
             $user->password = Hash::make($request['password']);
         }
 
