@@ -28,7 +28,6 @@ class DatabaseSeeder extends Seeder
         $user->surname = "DIAZ";
         $user->username = "LU";
         $user->email = "LUCIA@CORREO.ES";
-        $user->photo = "https://github.com/turbrecher.png";
         $user->password = Hash::make("12345678");
 
         $user->assignRole("admin");
@@ -41,12 +40,10 @@ class DatabaseSeeder extends Seeder
         $user2->username = "WRITER";
         $user2->email = "WRITER@CORREO.ES";
         $user2->password = Hash::make("12345678");
-
         $user2->assignRole("writer");
         $user2->save();
 
         User::factory(10)->create();
         Article::factory(30)->create();
-        Comment::factory(10)->create();
     }
 }

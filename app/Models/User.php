@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use HasRoles;
 use Spatie\Permission\Traits\HasRoles as TraitsHasRoles;
 use App\Models\Article;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -51,10 +50,5 @@ class User extends Authenticatable
     public function articles() : HasMany
     {
         return $this->hasMany(Article::class);
-    }
-
-    public function comments(): HasMany
-    {
-        return $this->hasMany(Comment::class);
     }
 }

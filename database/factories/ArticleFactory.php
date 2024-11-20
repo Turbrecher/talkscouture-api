@@ -44,14 +44,13 @@ class ArticleFactory extends Factory
 
         return [
             'title' => fake()->words(5, true),
-            'subtitle' => fake()->words(5, true),
             'content' => $content,
             'date' => fake()->date('d.m.Y'),
             'time' => fake()->time(),
             'photo' => $photos[rand(0,count($photos)-1)],
             'writer_id' => rand(1, 10),
             'section' => $sections[rand(0, 2)],
-            'description' => fake()->words(50, true),
+            'description' => fake()->words(49, true),
             'readTime' => rand(1, 10)
 
         ];

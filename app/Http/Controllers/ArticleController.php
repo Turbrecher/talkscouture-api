@@ -92,10 +92,6 @@ class ArticleController extends Controller
 
             //load subobjects
             $article->writer;
-            $article->comments;
-            foreach ($article->comments as $comment) {
-                $comment->user;
-            }
 
             if ($article == null) {
                 return response()->json(
@@ -111,6 +107,7 @@ class ArticleController extends Controller
                 200
             );
         } catch (Exception $e) {
+            print($e);
         }
     }
 
@@ -118,44 +115,66 @@ class ArticleController extends Controller
     //Method that creates a new user on db.
     function createArticle(Request $request)
     {
-        if ($request->user()->hasRole('user')) {
+
+        try{
+
+            if ($request->user()->hasRole('user')) {
+                return response()->json(
+                    ["message" => "You are not allowed to create an article"],
+                    401
+                );
+            }
+    
+    
+            $validated = $request->validate([
+                "title" => ["required", "max:100"],
+                "description" => ["required", "max:50"],
+                "content" => ["required"],
+                "readTime" => ["required", "max:2"],
+                "section" => ["required"],
+            ]);
+    
+    
+    
+            $article = new Article();
+            $article->title = $request['title'];
+            $article->description = $request['description'];
+            $article->content = $request['content'];
+            $article->readTime = $request['readTime'];
+            $article->section = $request['section'];
+            $article->writer_id = $request->user()->id;
+            $article->date = date("m-d-Y");
+            $article->time = date("H:i");
+    
+    
+    
+            /*if ($request->photo != "") {
+                $article->photo = $request['photo'];
+            }*/
+    
+    
+    
+            $article->save();
+    
             return response()->json(
-                ["message" => "You are not allowed to create an article"],
-                401
+                [
+                    "article_id" => $article->id,
+                    "article" => $article,
+                    "message" => "Article succesfully created"
+                ],
+                200
+            );
+
+        }catch(Exception $e){
+            return response()->json(
+                [
+                    "error" => $e,
+                    
+                ],
+                400
             );
         }
 
-
-        $validated = $request->validate([
-            "title" => ["required", "max:100"],
-            "subtitle" => ["required", "max:50"],
-            "content" => ["required", "max:10000"]
-        ]);
-
-
-        $article = new Article();
-        $article->title = $request['title'];
-        $article->subtitle = $request['subtitle'];
-        $article->content = $request['content'];
-        $article->writer_id = $request->user()->id;
-        $article->date = date("m-d-Y");
-        $article->time = date("H:i");
-
-
-        if ($request->photo != "") {
-            $article->photo = $request['photo'];
-        }
-
-        $article->save();
-
-        return response()->json(
-            [
-                "article_id" => $article->id,
-                "article" => $article,
-                "message" => "Article succesfully created"
-            ],
-            200
-        );
     }
 
 
@@ -203,53 +222,67 @@ class ArticleController extends Controller
     //Method that edits an existing user of db.
     function editArticle(Request $request, int $id)
     {
-        if ($request->user()->hasRole('user')) {
-            return response()->json(
-                ["message" => "You are not allowed to edit this article"],
-                401
-            );
-        }
+        try {
 
-
-        $validated = $request->validate([
-            "title" => ["required", "max:100"],
-            "subtitle" => ["required", "max:50"],
-            "content" => ["required", "max:10000"],
-            "photo" => [""]
-        ]);
-
-        $article = Article::find($id);
-
-        //If writer user tries to edit another person's article.
-        if ($request->user()->hasRole('writer')) {
-            $NOT_MY_ARTICLE = $request->user()->id != $article->writer_id;
-            if ($NOT_MY_ARTICLE) {
+            if ($request->user()->hasRole('user')) {
                 return response()->json(
                     ["message" => "You are not allowed to edit this article"],
                     401
                 );
             }
+
+
+            $validated = $request->validate([
+                "title" => ["required", "max:100"],
+                "description" => ["required", "max:50"],
+                "content" => ["required"],
+                "readTime" => ["required"],
+                "section" => ["required"],
+            ]);
+
+            $article = Article::find($id);
+
+            //If writer user tries to edit another person's article.
+            if ($request->user()->hasRole('writer')) {
+                $NOT_MY_ARTICLE = $request->user()->id != $article->writer_id;
+                if ($NOT_MY_ARTICLE) {
+                    return response()->json(
+                        ["message" => "You are not allowed to edit this article"],
+                        401
+                    );
+                }
+            }
+
+
+
+            $article->title = $request['title'];
+            $article->description = $request['description'];
+            $article->content = $request['content'];
+            $article->readTime = $request['readTime'];
+            $article->section = $request['section'];
+
+
+            if ($request->photo != "" && $request->photo != $article->photo) {
+                $article->photo = $request['photo'];
+            }
+
+            $article->save();
+
+            return response()->json(
+                [
+                    "article_id" => $article->id,
+                    "article" => $article,
+                    "message" => "Article succesfully edited"
+                ],
+                200
+            );
+        } catch (Exception $e) {
+            return response()->json(
+                [
+                    "error" => $e
+                ],
+                400
+            );
         }
-
-
-        $article->title = $request['title'];
-        $article->subtitle = $request['subtitle'];
-        $article->content = $request['content'];
-
-
-        if ($request->photo != "" && $request->photo != $article->photo) {
-            $article->photo = $request['photo'];
-        }
-
-        $article->save();
-
-        return response()->json(
-            [
-                "article_id" => $article->id,
-                "article" => $article,
-                "message" => "Article succesfully edited"
-            ],
-            200
-        );
     }
 }

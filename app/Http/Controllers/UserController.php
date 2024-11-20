@@ -109,19 +109,19 @@ class UserController extends Controller
         }
 
         if ($request->name) {
-            $user->name = $request['name'];
+            $user->name = strtoupper($request['name']);
         }
 
         if ($request->surname) {
-            $user->surname = $request['surname'];
+            $user->surname = strtoupper($request['surname']);
         }
 
         if ($request->username) {
-            $user->username = $request['username'];
+            $user->username = strtoupper($request['username']);
         }
 
         if ($request->email) {
-            $user->email = $request['email'];
+            $user->email = strtoupper($request['email']);
         }
 
         if ($request->password != " ") {
@@ -162,7 +162,6 @@ class UserController extends Controller
         $user->email = strtoupper($request['email']);
         $user->password = Hash::make($request['password']);
         $user->assignRole("user");
-        $user->photo = url("http://localhost:8000/api/profileimage/0");
 
         $user->save();
 

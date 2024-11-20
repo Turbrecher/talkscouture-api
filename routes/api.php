@@ -44,13 +44,5 @@ Route::put('/articles/{id}', [ArticleController::class, "editArticle"])->name("a
 Route::delete('/articles/{id}', [ArticleController::class, "deleteArticle"])->name("articleDelete")->middleware("auth:sanctum");
 
 
-
-//COMMENTS
-Route::get('/comments', [CommentController::class, "getComments"])->name("commentList");
-Route::post('/comments', [CommentController::class, "createComment"])->name("commentCreate")->middleware("auth:sanctum");
-Route::get('/comments/{id}', [CommentController::class, "getComment"])->name("commentDetails");
-Route::put('/comments/{id}', [CommentController::class, "editComment"])->name("commentEdit")->middleware("auth:sanctum");
-
-
 //DEFAULT IMAGE 
 Route::get('/profileimage/{id}', [ImagesController::class, "profileImage"])->name("profileImage");
