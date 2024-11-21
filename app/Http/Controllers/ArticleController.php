@@ -30,7 +30,7 @@ class ArticleController extends Controller
     //Method that retrieves all users of db.
     function getArticles(Request $request)
     {
-        $articles = Article::paginate(6);
+        $articles = Article::orderBy('date','desc')->orderBy('time','desc')->paginate(6);
         //load writer subobject
         foreach ($articles as $article) {
             $article->writer;
@@ -48,15 +48,15 @@ class ArticleController extends Controller
 
         //Filtering articles based on its section:
         if ($request->input('section') === 'The Thought') {
-            $articles = Article::where('section', '=', "The Thought")->paginate(15);
+            $articles = Article::where('section', '=', "The Thought")->orderBy('date','desc')->orderBy('time','desc')->paginate(15);
         }
 
         if ($request->input('section') === 'Dear Fashion') {
-            $articles = Article::where('section', '=', "Dear Fashion")->paginate(15);
+            $articles = Article::where('section', '=', "Dear Fashion")->orderBy('date','desc')->orderBy('time','desc')->paginate(15);
         }
 
         if ($request->input('section') === 'Mucho más que anuncios') {
-            $articles = Article::where('section', '=', "Mucho más que anuncios")->paginate(15);
+            $articles = Article::where('section', '=', "Mucho más que anuncios")->orderBy('date','desc')->orderBy('time','desc')->paginate(15);
         }
 
 
@@ -72,7 +72,7 @@ class ArticleController extends Controller
     function getWriterArticles(Request $request)
     {
         $id = $request->user()->id;
-        $articles = Article::where("writer_id", $id)->get();
+        $articles = Article::where("writer_id", $id)->orderBy('date','desc')->orderBy('time','desc')->get();
         //load writer subobject
         foreach ($articles as $article) {
             $article->writer;
@@ -144,7 +144,7 @@ class ArticleController extends Controller
             $article->readTime = $request->input('readTime');
             $article->section = $request->input('section');
             $article->writer_id = $request->user()->id;
-            $article->date = date("m-d-Y");
+            $article->date = date("Y.m.d");
             $article->time = date("H:i");
 
 
