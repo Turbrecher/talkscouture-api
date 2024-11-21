@@ -14,7 +14,7 @@ class ArticleController extends Controller
 
     function getAllArticles()
     {
-        $articles = Article::all();
+        $articles = Article::orderBy('date', 'desc')->orderBy('time','desc')->get();
         //load writer subobject
         foreach ($articles as $article) {
             $article->writer;

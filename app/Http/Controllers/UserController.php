@@ -13,7 +13,7 @@ class UserController extends Controller
     function getUsers(Request $request)
     {
 
-        if (!$request->user()->hasRole(['admin'])) {
+        if (!$request->user()->hasRole('admin')) {
             return response()->json(
                 ["message" => "You are not allowed to see this information"],
                 401
@@ -128,6 +128,10 @@ class UserController extends Controller
             $user->password = Hash::make($request['password']);
         }
 
+        if($request->role != " "){
+            $user->assignRole($request->role);
+        }
+
         $user->save();
 
         return response()->json(
@@ -143,35 +147,88 @@ class UserController extends Controller
     }
 
 
+    function registerAdmin(Request $request)
+    {
+
+        try {
+
+            //If user is not admin, return error
+            if (!$request->user()->hasRole('admin')) {
+                return response([
+                    "error" => "You don't have the permissions to access this resource"
+                ], 400);
+            }
+
+            $validated = $request->validate([
+                "name" => ["required"],
+                "surname" => ["required"],
+                "username" => ["required"],
+                "password" => ["required", "regex:/^[A-Za-z0-9?¿_-]{5,50}|^$/"],
+                "email" => ["required"],
+                "role" => ["required"]
+            ]);
+
+            $user = new User();
+            $user->name = strtoupper($request['name']);
+            $user->surname = strtoupper($request['surname']);
+            $user->username = strtoupper($request['username']);
+            $user->email = strtoupper($request['email']);
+            $user->password = Hash::make($request['password']);
+            $user->assignRole($request->input('role'));
+
+            $user->save();
+
+            return response()->json(
+                [
+                    "user_id" => $user->id,
+                    "message" => "User succesfully created"
+                ],
+                200
+            );
+        } catch (Exception $e) {
+            return response()->json([
+                'error' => $e
+            ]);
+        }
+    }
+
+
     //Method that creates a new user on db.
     function register(Request $request)
     {
-        $validated = $request->validate([
-            "name" => ["required"],
-            "surname" => ["required"],
-            "username" => ["required"],
-            "password" => ["required", "regex:/^[A-Za-z0-9?¿_-]{5,50}|^$/"],
-            "email" => ["required"],
-        ]);
+        try {
+
+            $validated = $request->validate([
+                "name" => ["required"],
+                "surname" => ["required"],
+                "username" => ["required"],
+                "password" => ["required", "regex:/^[A-Za-z0-9?¿_-]{5,50}|^$/"],
+                "email" => ["required"],
+            ]);
 
 
-        $user = new User();
-        $user->name = strtoupper($request['name']);
-        $user->surname = strtoupper($request['surname']);
-        $user->username = strtoupper($request['username']);
-        $user->email = strtoupper($request['email']);
-        $user->password = Hash::make($request['password']);
-        $user->assignRole("user");
+            $user = new User();
+            $user->name = strtoupper($request['name']);
+            $user->surname = strtoupper($request['surname']);
+            $user->username = strtoupper($request['username']);
+            $user->email = strtoupper($request['email']);
+            $user->password = Hash::make($request['password']);
+            $user->assignRole("user");
 
-        $user->save();
+            $user->save();
 
-        return response()->json(
-            [
-                "user_id" => $user->id,
-                "message" => "User succesfully created"
-            ],
-            200
-        );
+            return response()->json(
+                [
+                    "user_id" => $user->id,
+                    "message" => "User succesfully created"
+                ],
+                200
+            );
+        } catch (Exception $e) {
+            return response()->json([
+                'error' => $e
+            ]);
+        }
     }
 
 

@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Route;
 //AUTH
 Route::post('/login', [UserController::class, "login"])->name("login");
 Route::post('/register', [UserController::class, "register"])->name("register");
+Route::post('/registeradmin', [UserController::class, "registerAdmin"])->name("registerAdmin")->middleware("auth:sanctum");
 Route::post('/logout', [UserController::class, "logout"])->name("logout")->middleware("auth:sanctum");
 Route::post('/profile', [UserController::class, "profile"])->name("profile")->middleware("auth:sanctum");
 Route::post('/role', [UserController::class, "getRole"])->name("getRole")->middleware("auth:sanctum");
@@ -37,6 +38,7 @@ Route::delete('/users/{id}', [UserController::class, "deleteUser"])->name("userD
 
 //ARTICLES
 Route::get('/articles', [ArticleController::class, "getArticles"])->name("articleList");
+Route::get('/allarticles', [ArticleController::class, "getAllArticles"])->name("allArticleList");
 Route::get('/writerarticles', [ArticleController::class, "getWriterArticles"])->name("getWriterArticles")->middleware("auth:sanctum");
 Route::post('/articles', [ArticleController::class, "createArticle"])->name("articleCreate")->middleware("auth:sanctum");
 Route::post('/articles/edit', [ArticleController::class, "editArticle"])->name("articleEdit")->middleware("auth:sanctum");
@@ -45,5 +47,5 @@ Route::delete('/articles/{id}', [ArticleController::class, "deleteArticle"])->na
 
 
 //DEFAULT IMAGE 
-Route::post('/uploadimage', [ImagesController::class, "uploadImage"])->name("upload");
+//Route::post('/uploadimage', [ImagesController::class, "uploadImage"])->name("upload");
 Route::get('images/{name}', [ImagesController::class, "getImage"])->name("getImage");
