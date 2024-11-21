@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Article;
 use Illuminate\Http\Request;
 use Exception;
+use Illuminate\Support\Facades\Storage;
+use Mockery\Matcher\Any;
 
 class ArticleController extends Controller
 {
@@ -116,7 +118,7 @@ class ArticleController extends Controller
     function createArticle(Request $request)
     {
 
-        try{
+        try {
 
             if ($request->user()->hasRole('user')) {
                 return response()->json(
@@ -124,38 +126,37 @@ class ArticleController extends Controller
                     401
                 );
             }
-    
-    
+
+
             $validated = $request->validate([
                 "title" => ["required", "max:100"],
-                "description" => ["required", "max:50"],
+                "description" => ["required", "max:500"],
                 "content" => ["required"],
                 "readTime" => ["required", "max:2"],
                 "section" => ["required"],
+
             ]);
-    
-    
-    
+
             $article = new Article();
-            $article->title = $request['title'];
-            $article->description = $request['description'];
-            $article->content = $request['content'];
-            $article->readTime = $request['readTime'];
-            $article->section = $request['section'];
+            $article->title = $request->input('title');
+            $article->description = $request->input('description');
+            $article->content = $request->input('content');
+            $article->readTime = $request->input('readTime');
+            $article->section = $request->input('section');
             $article->writer_id = $request->user()->id;
             $article->date = date("m-d-Y");
             $article->time = date("H:i");
-    
-    
-    
-            /*if ($request->photo != "") {
-                $article->photo = $request['photo'];
-            }*/
-    
-    
-    
+
+
+            if ($request->file('photo')) {
+                $photo = $request->file('photo');
+                $name = $request->file('photo')->hashName();
+                Storage::put('articles/' . $name, file_get_contents($photo));
+                $article->photo = $name;
+            }
+
             $article->save();
-    
+
             return response()->json(
                 [
                     "article_id" => $article->id,
@@ -164,17 +165,15 @@ class ArticleController extends Controller
                 ],
                 200
             );
-
-        }catch(Exception $e){
+        } catch (Exception $e) {
             return response()->json(
                 [
                     "error" => $e,
-                    
+
                 ],
                 400
             );
         }
-
     }
 
 
@@ -220,7 +219,7 @@ class ArticleController extends Controller
     }
 
     //Method that edits an existing user of db.
-    function editArticle(Request $request, int $id)
+    function editArticle(Request $request)
     {
         try {
 
@@ -233,14 +232,18 @@ class ArticleController extends Controller
 
 
             $validated = $request->validate([
+                "id" => ['required'],
                 "title" => ["required", "max:100"],
-                "description" => ["required", "max:50"],
+                "description" => ["required", "max:500"],
                 "content" => ["required"],
                 "readTime" => ["required"],
-                "section" => ["required"],
+                "section" => ["required"]
+
             ]);
 
-            $article = Article::find($id);
+            $article = Article::find($request->input('id'));
+
+            
 
             //If writer user tries to edit another person's article.
             if ($request->user()->hasRole('writer')) {
@@ -254,17 +257,19 @@ class ArticleController extends Controller
             }
 
 
+            $article->title = $request->input('title');
+            $article->description = $request->input('description');
+            $article->content = $request->input('content');
+            $article->readTime = $request->input('readTime');
+            $article->section = $request->input('section');
 
-            $article->title = $request['title'];
-            $article->description = $request['description'];
-            $article->content = $request['content'];
-            $article->readTime = $request['readTime'];
-            $article->section = $request['section'];
-
-
-            if ($request->photo != "" && $request->photo != $article->photo) {
-                $article->photo = $request['photo'];
+            if ($request->file('photo')) {
+                $photo = $request->file('photo');
+                $name = $request->file('photo')->hashName();
+                Storage::put('articles/' . $name, file_get_contents($photo));
+                $article->photo =  $name;
             }
+
 
             $article->save();
 
@@ -272,7 +277,7 @@ class ArticleController extends Controller
                 [
                     "article_id" => $article->id,
                     "article" => $article,
-                    "message" => "Article succesfully edited"
+                    "message" => "Article succesfully edited",
                 ],
                 200
             );

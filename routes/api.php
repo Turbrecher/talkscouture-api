@@ -39,10 +39,11 @@ Route::delete('/users/{id}', [UserController::class, "deleteUser"])->name("userD
 Route::get('/articles', [ArticleController::class, "getArticles"])->name("articleList");
 Route::get('/writerarticles', [ArticleController::class, "getWriterArticles"])->name("getWriterArticles")->middleware("auth:sanctum");
 Route::post('/articles', [ArticleController::class, "createArticle"])->name("articleCreate")->middleware("auth:sanctum");
+Route::post('/articles/edit', [ArticleController::class, "editArticle"])->name("articleEdit")->middleware("auth:sanctum");
 Route::get('/articles/{id}', [ArticleController::class, "getArticle"])->name("articleDetails");
-Route::put('/articles/{id}', [ArticleController::class, "editArticle"])->name("articleEdit")->middleware("auth:sanctum");
 Route::delete('/articles/{id}', [ArticleController::class, "deleteArticle"])->name("articleDelete")->middleware("auth:sanctum");
 
 
 //DEFAULT IMAGE 
-Route::get('/profileimage/{id}', [ImagesController::class, "profileImage"])->name("profileImage");
+Route::post('/uploadimage', [ImagesController::class, "uploadImage"])->name("upload");
+Route::get('images/{name}', [ImagesController::class, "getImage"])->name("getImage");
