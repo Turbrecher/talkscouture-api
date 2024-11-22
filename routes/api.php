@@ -48,4 +48,5 @@ Route::delete('/articles/{id}', [ArticleController::class, "deleteArticle"])->na
 
 //DEFAULT IMAGE 
 //Route::post('/uploadimage', [ImagesController::class, "uploadImage"])->name("upload");
-Route::get('images/{name}', [ImagesController::class, "getImage"])->name("getImage");
+Route::get('images/articles/{name}', [ImagesController::class, "getArticlePhoto"])->name("getArticlePhoto");
+Route::get('images/signatures/{name}', [ImagesController::class, "getUserSignature"])->name("getUserSignature");

@@ -33,13 +33,30 @@ class ImagesController extends Controller
     }
 
 
-    function getImage(Request $request, string $name)
+    function getArticlePhoto(Request $request, string $name)
     {
 
         try {
 
             $img =  $request->file("img");
             $file = Storage::get('articles/' . $name);
+
+            return response($file);
+        } catch (Any $e) {
+            return response()->json([
+                'err' => "error"
+            ]);
+        }
+    }
+
+
+    function getUserSignature(Request $request, string $name)
+    {
+
+        try {
+
+            $img =  $request->file("img");
+            $file = Storage::get('signatures/' . $name);
 
             return response($file);
         } catch (Any $e) {

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -95,60 +96,82 @@ class UserController extends Controller
     //Method that edits an existing user of db.
     function editUser(Request $request, int $id)
     {
-        $validated = $request->validate([
-            "password" => ["max:50", "regex:/^[A-Za-z0-9?¿_-]{5,50}$|^ $"],
-        ]);
+        
+        try{
 
 
-        $user = User::find($id);
+            //return response()->json($request->input('password'));
 
-        if ($request->user()->hasRole(['user', 'writer'])) {
-            if ($user->id != $request->user()->id) {
-                return response()->json(
-                    ["message" => "You are not allowed to edit this user"],
-                    401
-                );
+            $validated = $request->validate([
+                "password" => ["max:50", "regex:/^[A-Za-z0-9?¿_-]{5,50}$|^ $"],
+            ]);
+    
+            $user = User::find($id);
+    
+            if ($request->user()->hasRole(['user', 'writer'])) {
+                if ($user->id != $request->user()->id) {
+                    return response()->json(
+                        ["message" => "You are not allowed to edit this user"],
+                        401
+                    );
+                }
             }
-        }
+    
+            if ($request->input('name')) {
+                $user->name = strtoupper($request->input('name'));
+            }
+    
+            if ($request->input('surname')) {
+                $user->surname = strtoupper($request->input('surname'));
+            }
+    
+            if ($request->input('username')) {
+                $user->username = strtoupper($request->input('username'));
+            }
+    
+            if ($request->input('email')) {
+                $user->email = strtoupper($request->input('email'));
+            }
+    
+    
+            //Adding signature image
+            if ($request->file('signature')) {
+                $signature = $request->file('signature');
+                $name = $request->file('signature')->hashName();
+                Storage::put('signatures/' . $name, file_get_contents($signature));
+                $user->signature = $name;
+            }
+    
+            if ($request->password != " ") {
+                $user->password = Hash::make($request['password']);
+            }
+    
+    
+    
+            if ($request->role != " ") {
+                $user->removeRole('writer');
+                $user->removeRole('user');
+                $user->assignRole($request->role);
+            }
+    
+            $user->save();
+    
+            return response()->json(
+                [
+                    "user_id" => $user->id,
+                    "message" => "User succesfully edited"
+                ],
+                200
+            );
 
-        if ($request->name) {
-            $user->name = strtoupper($request['name']);
-        }
+        }catch(Exception $e){
 
-        if ($request->surname) {
-            $user->surname = strtoupper($request['surname']);
-        }
-
-        if ($request->username) {
-            $user->username = strtoupper($request['username']);
-        }
-
-        if ($request->email) {
-            $user->email = strtoupper($request['email']);
-        }
-
-        if ($request->password != " ") {
-            $user->password = Hash::make($request['password']);
-        }
-
-        if ($request->role != " ") {
-            $user->removeRole('writer');
-            $user->removeRole('user');
-            $user->assignRole($request->role);
-        }
-
-        $user->save();
-
-        return response()->json(
-            [
-                "user_id" => $user->id,
-                "message" => "User succesfully edited"
+            return response()->json([
+                "error"=> $e
             ],
-            200
-        );
+            400);
 
-
-        return response()->json($request->user(), 200);
+        }
     }
 
 

@@ -6,6 +6,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\User;
 use App\Models\Article;
+use App\Models\Phrase;
 use App\Models\Comment;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
@@ -45,5 +46,6 @@ class DatabaseSeeder extends Seeder
 
         User::factory(10)->create();
         Article::factory(30)->create();
+        Phrase::factory(1)->create();
     }
 }
