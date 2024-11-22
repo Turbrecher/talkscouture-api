@@ -53,7 +53,10 @@ class UserController extends Controller
 
 
             return response()->json(
-                $user,
+                [
+                    "user" => $user,
+                    "role" => $user->roles[0]
+                ],
                 200
             );
         } catch (Exception $e) {
@@ -128,7 +131,9 @@ class UserController extends Controller
             $user->password = Hash::make($request['password']);
         }
 
-        if($request->role != " "){
+        if ($request->role != " ") {
+            $user->removeRole('writer');
+            $user->removeRole('user');
             $user->assignRole($request->role);
         }
 
@@ -178,6 +183,8 @@ class UserController extends Controller
 
             $user->save();
 
+            
+
             return response()->json(
                 [
                     "user_id" => $user->id,
@@ -199,18 +206,12 @@ class UserController extends Controller
         try {
 
             $validated = $request->validate([
-                "name" => ["required"],
-                "surname" => ["required"],
-                "username" => ["required"],
                 "password" => ["required", "regex:/^[A-Za-z0-9?¿_-]{5,50}|^$/"],
                 "email" => ["required"],
             ]);
 
 
             $user = new User();
-            $user->name = strtoupper($request['name']);
-            $user->surname = strtoupper($request['surname']);
-            $user->username = strtoupper($request['username']);
             $user->email = strtoupper($request['email']);
             $user->password = Hash::make($request['password']);
             $user->assignRole("user");
