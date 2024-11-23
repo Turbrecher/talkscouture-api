@@ -48,15 +48,15 @@ class ArticleController extends Controller
 
         //Filtering articles based on its section:
         if ($request->input('section') === 'The Thought') {
-            $articles = Article::where('section', '=', "The Thought")->orderBy('date','desc')->orderBy('time','desc')->paginate(15);
+            $articles = Article::where('section', '=', "The Thought")->orderBy('date','desc')->orderBy('time','desc')->paginate(100);
         }
 
         if ($request->input('section') === 'Dear Fashion') {
-            $articles = Article::where('section', '=', "Dear Fashion")->orderBy('date','desc')->orderBy('time','desc')->paginate(15);
+            $articles = Article::where('section', '=', "Dear Fashion")->orderBy('date','desc')->orderBy('time','desc')->paginate(100);
         }
 
         if ($request->input('section') === 'Mucho más que anuncios') {
-            $articles = Article::where('section', '=', "Mucho más que anuncios")->orderBy('date','desc')->orderBy('time','desc')->paginate(15);
+            $articles = Article::where('section', '=', "Mucho más que anuncios")->orderBy('date','desc')->orderBy('time','desc')->paginate(100);
         }
 
 
@@ -129,8 +129,9 @@ class ArticleController extends Controller
 
 
             $validated = $request->validate([
-                "title" => ["required", "max:100"],
-                "description" => ["required", "max:500"],
+                "title" => ["required"],
+                "short_title" => ["required"],
+                "description" => ["required"],
                 "content" => ["required"],
                 "readTime" => ["required", "max:2"],
                 "section" => ["required"],
@@ -138,8 +139,9 @@ class ArticleController extends Controller
             ]);
 
             $article = new Article();
-            $article->title = $request->input('title');
-            $article->description = $request->input('description');
+            $article->title = strtolower($request->input('title'));
+            $article->short_title = strtolower($request->input('short_title'));
+            $article->description = strtolower($request->input('description'));
             $article->content = $request->input('content');
             $article->readTime = $request->input('readTime');
             $article->section = $request->input('section');
@@ -148,11 +150,18 @@ class ArticleController extends Controller
             $article->time = date("H:i");
 
 
-            if ($request->file('photo')) {
-                $photo = $request->file('photo');
-                $name = $request->file('photo')->hashName();
-                Storage::put('articles/' . $name, file_get_contents($photo));
-                $article->photo = $name;
+            if ($request->file('headerPhoto')) {
+                $headerPhoto = $request->file('headerPhoto');
+                $name = $request->file('headerPhoto')->hashName();
+                Storage::put('articles/' . $name, file_get_contents($headerPhoto));
+                $article->headerPhoto = $name;
+            }
+
+            if ($request->file('thumbnail')) {
+                $thumbnail = $request->file('thumbnail');
+                $name = $request->file('thumbnail')->hashName();
+                Storage::put('articles/' . $name, file_get_contents($thumbnail));
+                $article->thumbnail = $name;
             }
 
             $article->save();
@@ -233,8 +242,8 @@ class ArticleController extends Controller
 
             $validated = $request->validate([
                 "id" => ['required'],
-                "title" => ["required", "max:100"],
-                "description" => ["required", "max:500"],
+                "title" => ["required"],
+                "description" => ["required"],
                 "content" => ["required"],
                 "readTime" => ["required"],
                 "section" => ["required"]
@@ -257,18 +266,26 @@ class ArticleController extends Controller
             }
 
 
-            $article->title = $request->input('title');
-            $article->description = $request->input('description');
+            $article->title = ucfirst(strtolower($request->input('title')));
+            $article->short_title = ucfirst(strtolower($request->input('short_title')));
+            $article->description = ucfirst(strtolower($request->input('description')));
             $article->content = $request->input('content');
             $article->readTime = $request->input('readTime');
             $article->section = $request->input('section');
 
-            if ($request->file('photo')) {
-                $photo = $request->file('photo');
-                $name = $request->file('photo')->hashName();
-                Storage::put('articles/' . $name, file_get_contents($photo));
-                $article->photo =  $name;
+            if ($request->file('headerPhoto')) {
+                $headerPhoto = $request->file('headerPhoto');
+                $name = $request->file('headerPhoto')->hashName();
+                Storage::put('articles/' . $name, file_get_contents($headerPhoto));
+                $article->headerPhoto = $name;
             }
+
+            if ($request->file('thumbnail')) {
+                $thumbnail = $request->file('thumbnail');
+                $name = $request->file('thumbnail')->hashName();
+                Storage::put('articles/' . $name, file_get_contents($thumbnail));
+                $article->thumbnail = $name;
+            }   
 
 
             $article->save();

@@ -32,10 +32,12 @@ class ArticleFactory extends Factory
 
         return [
             'title' => fake()->words(5, true),
+            'short_title' => fake()->words(2, true),
             'content' => $content,
             'date' => fake()->date("Y.m.d"),
             'time' => fake()->time(),
-            'photo' => $photos[rand(0,count($photos)-1)],
+            'headerPhoto' => $photos[rand(0,count($photos)-1)],
+            'thumbnail' => "logo.png",
             'writer_id' => rand(1, 10),
             'section' => $sections[rand(0, 2)],
             'description' => fake()->words(49, true),

@@ -45,7 +45,7 @@ class DatabaseSeeder extends Seeder
         $user2->save();
 
         User::factory(10)->create();
-        Article::factory(30)->create();
+        Article::factory(20)->create();
         Phrase::factory(1)->create();
     }
 }
