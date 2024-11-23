@@ -28,24 +28,24 @@ class DatabaseSeeder extends Seeder
         $user->name = "LUCIA";
         $user->surname = "DIAZ";
         $user->username = "LU";
-        $user->email = "LUCIA@CORREO.ES";
-        $user->password = Hash::make("12345678");
+        $user->email = env('USER_DEFAULT_EMAIL');
+        $user->password = Hash::make(env('USER_DEFAULT_PASSWORD'));
 
         $user->assignRole("admin");
         $user->save();
 
 
-        $user2 = new User();
+        /*$user2 = new User();
         $user2->name = "WRITER";
         $user2->surname = "WRITER";
         $user2->username = "WRITER";
         $user2->email = "WRITER@CORREO.ES";
         $user2->password = Hash::make("12345678");
         $user2->assignRole("writer");
-        $user2->save();
+        $user2->save();*/
 
-        User::factory(10)->create();
+        /*User::factory(10)->create();
         Article::factory(20)->create();
-        Phrase::factory(1)->create();
+        Phrase::factory(1)->create();*/
     }
 }
