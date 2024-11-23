@@ -40,7 +40,7 @@ class DatabaseSeeder extends Seeder
         $user2->surname = "VERA CORONEL";
         $user2->username = "VITTORIO";
         $user2->email = "VICTOR@CORREO.ES";
-        $user->password = Hash::make(env('USER_DEFAULT_PASSWORD_2'));
+        $user2->password = Hash::make(env('USER_DEFAULT_PASSWORD_2'));
         $user2->assignRole("admin");
         $user2->save();
 
