@@ -24,7 +24,7 @@ return new class extends Migration
             $table->string("time");
             $table->string("headerPhoto");
             $table->string("thumbnail");
-            $table->unsignedInteger("writer_id");
+            $table->unsignedBigInteger("writer_id");
             $table->foreign("writer_id")->references('id')->on('users')->cascadeOnDelete();
         });
     }
