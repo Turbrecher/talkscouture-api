@@ -92,15 +92,15 @@ class ArticleController extends Controller
         try {
             $article = Article::find($id);
 
-            //load subobjects
-            $article->writer;
-
             if ($article == null) {
                 return response()->json(
                     ["error" => "The article you are looking for doesn't exist"],
                     404
                 );
             }
+
+            //load subobjects
+            $article->writer;
 
 
             return response()->json(
@@ -127,21 +127,20 @@ class ArticleController extends Controller
                 );
             }
 
-
             $validated = $request->validate([
                 "title" => ["required"],
                 "short_title" => ["required"],
                 "description" => ["required"],
                 "content" => ["required"],
-                "readTime" => ["required", "max:2"],
+                "readTime" => ["required"],
                 "section" => ["required"],
 
             ]);
 
             $article = new Article();
-            $article->title = strtolower($request->input('title'));
-            $article->short_title = strtolower($request->input('short_title'));
-            $article->description = strtolower($request->input('description'));
+            $article->title = ucfirst(strtolower($request->input('title')));
+            $article->short_title = ucfirst(strtolower($request->input('short_title')));
+            $article->description = ucfirst(strtolower($request->input('description')));
             $article->content = $request->input('content');
             $article->readTime = $request->input('readTime');
             $article->section = $request->input('section');

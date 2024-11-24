@@ -28,8 +28,8 @@ class DatabaseSeeder extends Seeder
         $user->name = "LUCIA";
         $user->surname = "DIAZ";
         $user->username = "LU";
-        $user->email = env('USER_DEFAULT_EMAIL');
-        $user->password = Hash::make(env('USER_DEFAULT_PASSWORD'));
+        $user->email = env('USER_DEFAULT_EMAIL_1');
+        $user->password = Hash::make(env('USER_DEFAULT_PASSWORD_1'));
 
         $user->assignRole("admin");
         $user->save();
@@ -39,13 +39,11 @@ class DatabaseSeeder extends Seeder
         $user2->name = "VICTOR";
         $user2->surname = "VERA CORONEL";
         $user2->username = "VITTORIO";
-        $user2->email = "VICTOR@CORREO.ES";
+        $user2->email = env("USER_DEFAULT_EMAIL_2");
         $user2->password = Hash::make(env('USER_DEFAULT_PASSWORD_2'));
         $user2->assignRole("admin");
         $user2->save();
 
-        /*User::factory(10)->create();
-        Article::factory(20)->create();
-        Phrase::factory(1)->create();*/
+        Article::factory(18)->create();
     }
 }

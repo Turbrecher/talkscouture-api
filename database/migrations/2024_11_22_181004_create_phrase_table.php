@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('phrases', function (Blueprint $table) {
             $table->id();
-            $table->string("phrase")->unique;
+            $table->mediumText("phrase")->unique;
             
         });
     }

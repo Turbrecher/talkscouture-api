@@ -61,6 +61,12 @@ class UserController extends Controller
                 200
             );
         } catch (Exception $e) {
+            return response()->json(
+                [
+                    "error" => $e
+                ],
+                400
+            );
         }
     }
 
@@ -96,18 +102,11 @@ class UserController extends Controller
     //Method that edits an existing user of db.
     function editUser(Request $request, int $id)
     {
-        
-        try{
 
+        try {
 
-            //return response()->json($request->input('password'));
-
-            $validated = $request->validate([
-                "password" => ["max:50", "regex:/^[A-Za-z0-9?¿_-]{5,50}$|^ $"],
-            ]);
-    
             $user = User::find($id);
-    
+
             if ($request->user()->hasRole(['user', 'writer'])) {
                 if ($user->id != $request->user()->id) {
                     return response()->json(
@@ -116,24 +115,24 @@ class UserController extends Controller
                     );
                 }
             }
-    
+
             if ($request->input('name')) {
                 $user->name = strtoupper($request->input('name'));
             }
-    
+
             if ($request->input('surname')) {
                 $user->surname = strtoupper($request->input('surname'));
             }
-    
+
             if ($request->input('username')) {
                 $user->username = strtoupper($request->input('username'));
             }
-    
+
             if ($request->input('email')) {
                 $user->email = strtoupper($request->input('email'));
             }
-    
-    
+
+
             //Adding signature image
             if ($request->file('signature')) {
                 $signature = $request->file('signature');
@@ -141,21 +140,23 @@ class UserController extends Controller
                 Storage::put('signatures/' . $name, file_get_contents($signature));
                 $user->signature = $name;
             }
-    
-            if ($request->password != " ") {
+
+            if ($request->password) {
                 $user->password = Hash::make($request['password']);
             }
-    
-    
-    
-            if ($request->role != " ") {
+
+
+
+            if ($request->input('role')) {
                 $user->removeRole('writer');
                 $user->removeRole('user');
                 $user->assignRole($request->role);
             }
-    
+
+            
+
             $user->save();
-    
+
             return response()->json(
                 [
                     "user_id" => $user->id,
@@ -163,14 +164,14 @@ class UserController extends Controller
                 ],
                 200
             );
+        } catch (Exception $e) {
 
-        }catch(Exception $e){
-
-            return response()->json([
-                "error"=> $e
-            ],
-            400);
-
+            return response()->json(
+                [
+                    "error" => $e
+                ],
+                400
+            );
         }
     }
 
@@ -206,7 +207,7 @@ class UserController extends Controller
 
             $user->save();
 
-            
+
 
             return response()->json(
                 [
@@ -253,6 +254,14 @@ class UserController extends Controller
                 'error' => $e
             ]);
         }
+    }
+
+    //loginError
+    function loginError(Request $request)
+    {
+        return response()->json([
+            "message" => "You have to log in before accessing this resource"
+        ], 401);
     }
 
 

@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Route;
 
 
 //AUTH
+Route::get('/login', [UserController::class, "loginError"])->name("loginError");
 Route::post('/login', [UserController::class, "login"])->name("login");
 Route::post('/register', [UserController::class, "register"])->name("register");
 Route::post('/registeradmin', [UserController::class, "registerAdmin"])->name("registerAdmin")->middleware("auth:sanctum");
@@ -32,7 +33,7 @@ Route::post('/role', [UserController::class, "getRole"])->name("getRole")->middl
 //USERS
 Route::get('/users', [UserController::class, "getUsers"])->name("userList")->middleware("auth:sanctum");
 Route::get('/users/{id}', [UserController::class, "getUser"])->name("userDetails")->middleware("auth:sanctum");
-Route::put('/users/{id}', [UserController::class, "editUser"])->name("userEdit")->middleware("auth:sanctum");
+Route::post('/users/edit/{id}', [UserController::class, "editUser"])->name("userEdit")->middleware("auth:sanctum");
 Route::delete('/users/{id}', [UserController::class, "deleteUser"])->name("userDelete")->middleware("auth:sanctum");
 
 
