@@ -43,7 +43,5 @@ class DatabaseSeeder extends Seeder
         $user2->password = Hash::make(env('USER_DEFAULT_PASSWORD_2'));
         $user2->assignRole("admin");
         $user2->save();
-
-        Article::factory(18)->create();
     }
 }

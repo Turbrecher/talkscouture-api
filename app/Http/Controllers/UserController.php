@@ -145,15 +145,11 @@ class UserController extends Controller
                 $user->password = Hash::make($request['password']);
             }
 
-
-
             if ($request->input('role')) {
                 $user->removeRole('writer');
                 $user->removeRole('user');
                 $user->assignRole($request->role);
             }
-
-            
 
             $user->save();
 
