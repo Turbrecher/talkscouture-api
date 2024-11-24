@@ -38,7 +38,7 @@ class ArticleFactory extends Factory
             'time' => fake()->time(),
             'headerPhoto' => $photos[rand(0,count($photos)-1)],
             'thumbnail' => "logo.png",
-            'writer_id' => rand(1, 10),
+            'writer_id' => rand(1,2),
             'section' => $sections[rand(0, 2)],
             'description' => fake()->words(49, true),
             'readTime' => rand(1, 10)
